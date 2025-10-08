@@ -37,7 +37,7 @@ class World:
     def draw(self):
         for i in range(20):
             x = i * 16 - self.camera_x
-            pyxel.rect(x, self.ground_y, 16, 16, 11)
+            #pyxel.rect(x, self.ground_y, 16, 16, 11)
             
 class Background:
     def __init__(self):
