@@ -1,5 +1,8 @@
 import pyxel
 
+screen_width = 180
+screen_height = 160
+
 player_first_position_x = 20
 player_first_position_y = 100
 player_speed = 5
@@ -51,10 +54,10 @@ class Background:
 
     def draw(self, camera_x):
         # #地面
-        pyxel.blt(100 - camera_x, self.world.ground_y, 1, 0, 0, 16, 8, pyxel.COLOR_BLACK)
+        #pyxel.blt(100 - camera_x, self.world.ground_y, 1, 0, 0, 16, 8, pyxel.COLOR_BLACK)
         #pyxel.blt(表示させるゲーム画面のx座標, 表示させるゲーム画面のy座標, イメージバンクのインデックス番号, イメージバンク内のx座標, イメージバンク内のy座標, ピクセルアートの幅, ピクセルアートの高さ, 透明として扱うカラー)
         
-        # pyxel.bltm(0,0, 0, 0,0, pyxel.width,pyxel.height, pyxel.COLOR_BLACK)
+        pyxel.bltm(0 - camera_x, 0, 0, 0, 0, 5000, screen_height, pyxel.COLOR_PINK)
 
         # for i in range(10):
         #     x = i * 80 - camera_x * 0.5
@@ -81,7 +84,7 @@ class Player:
         
 class App:
     def __init__(self):
-        pyxel.init(160, 120, title = "Azuma_game")
+        pyxel.init(screen_width, screen_height, title = "Azuma_game")
         pyxel.load("my_resource.pyxres")
         pyxel.mouse(True)
         self.world = World()
