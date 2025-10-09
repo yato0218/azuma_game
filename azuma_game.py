@@ -4,6 +4,8 @@ player_first_position_x = 20
 player_first_position_y = 100
 player_speed = 5
 player_jump = 20
+player_frame_interval = 1
+player_frame_num = 8
 
 
 class Debug:
@@ -52,8 +54,8 @@ class Background:
         pyxel.blt(100 - camera_x, self.world.ground_y, 1, 0, 0, 16, 8, pyxel.COLOR_BLACK)
         #pyxel.blt(表示させるゲーム画面のx座標, 表示させるゲーム画面のy座標, イメージバンクのインデックス番号, イメージバンク内のx座標, イメージバンク内のy座標, ピクセルアートの幅, ピクセルアートの高さ, 透明として扱うカラー)
         
+        # pyxel.bltm(0,0, 0, 0,0, pyxel.width,pyxel.height, pyxel.COLOR_BLACK)
 
-        #pyxel.bltm(0, 0, 1, camera_x, 0, 128, 128)
         # for i in range(10):
         #     x = i * 80 - camera_x * 0.5
         #     pyxel.tri(x, 104, x + 40, 60, x + 80, 104, 3)
@@ -70,7 +72,10 @@ class Player:
             self.player_y -= player_jump
     
     def draw(self):
-        pyxel.blt(self.player_x, self.player_y, 0, 0, 0, 16, 16, pyxel.COLOR_BLACK)
+        self.frame_index = (pyxel.frame_count // player_frame_interval) % player_frame_num
+        self.u = self.frame_index * 16 + 16
+        pyxel.blt(self.player_x, self.player_y, 0, self.u, 0, 16, 16, pyxel.COLOR_BLACK)
+        #pyxel.text(10, 50, f"frame_index: {self.frame_index}", pyxel.COLOR_PINK)
 
     
         
@@ -100,7 +105,7 @@ class App:
         
         
     def draw(self):
-        pyxel.cls(12)
+        pyxel.cls(3)
         
         #描画
         self.background.draw(self.world.camera_x)
