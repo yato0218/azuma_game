@@ -3,6 +3,7 @@ import pyxel
 player_first_position_x = 20
 player_first_position_y = 100
 player_speed = 5
+player_jump = 20
 
 
 class Debug:
@@ -26,13 +27,13 @@ class World:
         self.ground_y = 104
         
     def update(self):
-            
-        if pyxel.btn(pyxel.KEY_RIGHT):
-                self.world_x += player_speed
-        if pyxel.btn(pyxel.KEY_LEFT):
-            self.world_x = max(self.world_x - player_speed, 0)
+        self.world_x += player_speed
+        # if pyxel.btn(pyxel.KEY_RIGHT):
+        #         self.world_x += player_speed
+        # if pyxel.btn(pyxel.KEY_LEFT):
+        #     self.world_x = max(self.world_x - player_speed, 0)
         #カメラを更新することで、ワールドが動いたように見える
-        self.camera_x = self.world_x - 60
+        self.camera_x = self.world_x
             
     def draw(self):
         for i in range(20):
@@ -40,18 +41,23 @@ class World:
             #pyxel.rect(x, self.ground_y, 16, 16, 11)
             
 class Background:
-    def __init__(self):
-        pass
+    def __init__(self, world):
+        self.world = world
     
     def update(self):
         pass
 
     def draw(self, camera_x):
-        #背景
-        for i in range(10):
-            x = i * 80 - camera_x * 0.5
-            #pyxel.tri(x, 104, x + 40, 60, x + 80, 104, 3)
-            pyxel.rect(x, 0, 16, 16, 11)
+        # #地面
+        pyxel.blt(100 - camera_x, self.world.ground_y, 1, 0, 0, 16, 8, pyxel.COLOR_BLACK)
+        #pyxel.blt(表示させるゲーム画面のx座標, 表示させるゲーム画面のy座標, イメージバンクのインデックス番号, イメージバンク内のx座標, イメージバンク内のy座標, ピクセルアートの幅, ピクセルアートの高さ, 透明として扱うカラー)
+        
+
+        #pyxel.bltm(0, 0, 1, camera_x, 0, 128, 128)
+        # for i in range(10):
+        #     x = i * 80 - camera_x * 0.5
+        #     pyxel.tri(x, 104, x + 40, 60, x + 80, 104, 3)
+            #pyxel.rect(x, 0, 16, 16, 11)
 
 
 class Player:
@@ -60,10 +66,10 @@ class Player:
         self.player_y = player_first_position_y
         
     def update(self):
-        pass
+        if pyxel.btnp(pyxel.KEY_UP):
+            self.player_y -= player_jump
     
     def draw(self):
-        pass
         pyxel.blt(self.player_x, self.player_y, 0, 0, 0, 16, 16, pyxel.COLOR_BLACK)
 
     
@@ -74,7 +80,7 @@ class App:
         pyxel.load("my_resource.pyxres")
         pyxel.mouse(True)
         self.world = World()
-        self.background = Background()
+        self.background = Background(self.world)
         self.player = Player()
         
         self.debug = Debug(pyxel.mouse_x, pyxel.mouse_y)
