@@ -113,7 +113,7 @@ class App:
         pyxel.init(screen_width, screen_height, title = "Azuma_game")
         pyxel.load("my_resource.pyxres")
         pyxel.mouse(True)
-        #pyxel.playm(0, loop = True)
+        pyxel.playm(0, loop = True)
         #pyxel.stop()
         self.world = World()
         self.background = Background(self.world)
