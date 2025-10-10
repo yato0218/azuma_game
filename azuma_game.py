@@ -7,7 +7,7 @@ screen_height = 160
 player_size_x = 16
 player_size_y = 16
 player_first_position_x = 20
-player_first_position_y = screen_height - 40 - player_size_x
+player_first_position_y = 104
 player_speed = 5
 player_jump = 20
 player_frame_interval = 1
@@ -34,7 +34,7 @@ class World:
     def __init__(self):
         self.world_x = 0
         self.camera_x = 0
-        self.ground_y = 104
+        self.ground_y = 140
         self.gravity = 9.8
         
     def update(self):
@@ -80,7 +80,12 @@ class Player:
         
         
     def update(self):
-        if pyxel.btnp(pyxel.KEY_UP):
+        if (pyxel.btnp(pyxel.KEY_UP)
+        or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A)
+        or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B)
+        or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X)
+        or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_Y)
+        ):
             self.velocity_y -= player_jump
             
         #ここで重力計算しておく
@@ -91,9 +96,9 @@ class Player:
         
         #地面より下に行かないためには地面より下の座標のときにself.player_yをself.world.ground_yより低い値にする
         #この時、self.velocity_yを0にしておくこと。
-        if self.player_y > self.world.ground_y - player_size_y:
-            self.player_y = self.world.ground_y - player_size_y
-            self.velocity_y = 0    
+        if self.player_y > 104:
+            self.player_y = 104
+            self.velocity_y = 0  
     
     def draw(self):
         self.frame_index = (pyxel.frame_count // player_frame_interval) % player_frame_num
