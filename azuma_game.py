@@ -3,12 +3,17 @@ import pyxel
 screen_width = 180
 screen_height = 160
 
+
+player_size_x = 16
+player_size_y = 16
 player_first_position_x = 20
-player_first_position_y = 100
+player_first_position_y = screen_height - 40 - player_size_x
 player_speed = 5
 player_jump = 20
 player_frame_interval = 1
 player_frame_num = 8
+
+
 
 
 class Debug:
@@ -30,6 +35,7 @@ class World:
         self.world_x = 0
         self.camera_x = 0
         self.ground_y = 104
+        self.gravity = 9.8
         
     def update(self):
         self.world_x += player_speed
@@ -57,7 +63,7 @@ class Background:
         #pyxel.blt(100 - camera_x, self.world.ground_y, 1, 0, 0, 16, 8, pyxel.COLOR_BLACK)
         #pyxel.blt(表示させるゲーム画面のx座標, 表示させるゲーム画面のy座標, イメージバンクのインデックス番号, イメージバンク内のx座標, イメージバンク内のy座標, ピクセルアートの幅, ピクセルアートの高さ, 透明として扱うカラー)
         
-        pyxel.bltm(0 - camera_x, 0, 0, 0, 0, 5000, screen_height, pyxel.COLOR_PINK)
+        pyxel.bltm(0 - camera_x, 0, 0, 0, 0, 2047, screen_height, pyxel.COLOR_PINK)
 
         # for i in range(10):
         #     x = i * 80 - camera_x * 0.5
@@ -66,18 +72,33 @@ class Background:
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, world):
         self.player_x = player_first_position_x
         self.player_y = player_first_position_y
+        self.world = world
+        self.velocity_y = 0
+        
         
     def update(self):
         if pyxel.btnp(pyxel.KEY_UP):
-            self.player_y -= player_jump
+            self.velocity_y -= player_jump
+            
+        #ここで重力計算しておく
+        self.velocity_y += self.world.gravity * 0.2
+        
+        #playerの座標を計算
+        self.player_y += self.velocity_y
+        
+        #地面より下に行かないためには地面より下の座標のときにself.player_yをself.world.ground_yより低い値にする
+        #この時、self.velocity_yを0にしておくこと。
+        if self.player_y > self.world.ground_y - player_size_y:
+            self.player_y = self.world.ground_y - player_size_y
+            self.velocity_y = 0    
     
     def draw(self):
         self.frame_index = (pyxel.frame_count // player_frame_interval) % player_frame_num
         self.u = self.frame_index * 16 + 16
-        pyxel.blt(self.player_x, self.player_y, 0, self.u, 0, 16, 16, pyxel.COLOR_BLACK)
+        pyxel.blt(self.player_x, self.player_y, 0, self.u, 0, player_size_x, player_size_y, pyxel.COLOR_BLACK)
         #pyxel.text(10, 50, f"frame_index: {self.frame_index}", pyxel.COLOR_PINK)
 
     
@@ -87,9 +108,11 @@ class App:
         pyxel.init(screen_width, screen_height, title = "Azuma_game")
         pyxel.load("my_resource.pyxres")
         pyxel.mouse(True)
+        #pyxel.playm(0, loop = True)
+        #pyxel.stop()
         self.world = World()
         self.background = Background(self.world)
-        self.player = Player()
+        self.player = Player(self.world)
         
         self.debug = Debug(pyxel.mouse_x, pyxel.mouse_y)
         
