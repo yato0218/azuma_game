@@ -8,12 +8,12 @@ player_size_x = 16
 player_size_y = 16
 player_first_position_x = 20
 player_first_position_y = 104
-player_speed = 5
-player_jump = 20
+player_speed = 2
+player_jump = 7
 player_frame_interval = 1
 player_frame_num = 8
 
-
+gravity_switch = True
 
 
 class Debug:
@@ -35,7 +35,8 @@ class World:
         self.world_x = 0
         self.camera_x = 0
         self.ground_y = 140
-        self.gravity = 9.8
+        self.gravity = 2
+        self.dt = 0.4
         
     def update(self):
         self.world_x += player_speed
@@ -77,28 +78,43 @@ class Player:
         self.player_y = player_first_position_y
         self.world = world
         self.velocity_y = 0
+        self.jump_count = 0
+        
         
         
     def update(self):
-        if (pyxel.btnp(pyxel.KEY_UP)
+        if (self.jump_count < 1 and pyxel.btnp(pyxel.KEY_UP)
         or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A)
         or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B)
         or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_X)
         or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_Y)
         ):
             self.velocity_y -= player_jump
-            
+            self.jump_count += 1
+        
         #ここで重力計算しておく
-        self.velocity_y += self.world.gravity * 0.2
+        self.velocity_y += self.world.gravity * self.world.dt
         
-        #playerの座標を計算
-        self.player_y += self.velocity_y
+        if gravity_switch:
+            
+            #playerの座標を計算
+            self.player_y += self.velocity_y
         
-        #地面より下に行かないためには地面より下の座標のときにself.player_yをself.world.ground_yより低い値にする
-        #この時、self.velocity_yを0にしておくこと。
-        if self.player_y > 104:
-            self.player_y = 104
-            self.velocity_y = 0  
+        #print(f"self.player_y: {self.player_y}")
+                
+        tile_x = (self.player_x + self.world.camera_x + player_size_x // 2 ) // 8
+        tile_y = (self.player_y + player_size_y) // 8
+        
+        tile = pyxel.tilemap(0).pget(tile_x, tile_y)
+        print(f"tile: {tile}")
+                
+            
+        if tile == (0, 4):
+            if self.velocity_y > 0:#速度が正の値ということは落下状態ということ.
+                self.player_y = tile_y * 8 - player_size_y
+                self.velocity_y = 0
+                self.jump_count = 0
+        
     
     def draw(self):
         self.frame_index = (pyxel.frame_count // player_frame_interval) % player_frame_num
