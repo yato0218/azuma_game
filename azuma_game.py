@@ -122,7 +122,13 @@ class Player:
         pyxel.blt(self.player_x, self.player_y, 0, self.u, 0, player_size_x, player_size_y, pyxel.COLOR_BLACK)
         #pyxel.text(10, 50, f"frame_index: {self.frame_index}", pyxel.COLOR_PINK)
 
-    
+class Enemy:
+    def __init__(self):
+        pass
+    def update(self):
+        pass
+    def draw(self):
+        pass   
         
 class App:
     def __init__(self):
@@ -130,6 +136,7 @@ class App:
         pyxel.load("my_resource.pyxres")
         pyxel.mouse(True)
         pyxel.playm(0, loop = True)
+        self.jp_font = pyxel.Font("umplus_j10r.bdf")
         #pyxel.stop()
         self.world = World()
         self.background = Background(self.world)
